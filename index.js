@@ -3,7 +3,7 @@ const Discord = require('discord.js');
 const https = require('https');
 
 const client = new Discord.Client();
-const url = "https://www.bitstamp.net/api/ticker";
+const url = "https://www.bitstamp.net/api/v2/ticker/btcusd/";
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
@@ -22,12 +22,7 @@ client.on('message', msg => {
 		});
 		res.on("end", () => {
 			body = JSON.parse(body);
-			// console.log(
-			// `City: ${body.results[0].formatted_address} -`,
-			// `Latitude: ${body.results[0].geometry.location.lat} -`,
-			// `Longitude: ${body.results[0].geometry.location.lng}`
-			// );
-			msg.reply(`${body.last}`);
+			msg.reply(`\$${body.last}`);
 		});
 	});
   }
