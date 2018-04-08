@@ -20,6 +20,12 @@ client.on('message', msg => {
         return;
     }
 
+    if (msg.content === "!markets")
+    {
+        msg.reply("Use !price <market_name> with one of the following markets: " + pairs.join("','") + ". ");
+        return;
+    }
+
     var content = msg.content.split(" ");
     if (content[0] == "!price") {
         var currPair = content[1];
@@ -51,6 +57,11 @@ client.on('message', msg => {
             		msg.reply("Latest Bitstamp price for " + currPair + ": " + pairSymbol[i] + `${body.last}`);
             	});
             });
+        }
+        else
+        {
+            msg.reply("Use !price <market_name> with one of the following markets: " + pairs.join("','") + ". ");
+            return;
         }
     }
 });
