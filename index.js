@@ -5,24 +5,20 @@ const https = require('https');
 const client = new Discord.Client();
 const url = "https://www.bitstamp.net/api/v2/ticker/";
 const pairs = ["btcusd", "btceur", "eurusd", "xrpusd", "xrpeur", "xrpbtc", "ltcusd", "ltceur", "ltcbtc", "ethusd", "etheur", "ethbtc", "bchusd", "bcheur", "bchbtc"];
-const pairSymbol = ["$", "€", "$", "$", "€", "", "$", "€", "", "$", "€", "", "$", "€", "" ];
-
+const pairSymbol = ["$", "€", "$", "$", "€", "BTC", "$", "€", "BTC", "$", "€", "BTC", "$", "€", "BTC" ];
 //https://www.bitstamp.net/api/
-//TODO: add currency pairs - 
+
+//TODO: add bitfinex and others
+//https://docs.bitfinex.com/v2/docs/ws-general#section-supported-pairs
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
 
 client.on('message', msg => {
-    if (msg.content === '!ping') {
-        msg.reply('pong!');
-        return;
-    }
-
-    if (msg.content === "!markets")
+    if (msg.content === "!help")
     {
-        msg.reply("Use !price <market_name> with one of the following markets: " + pairs.join("','") + ". ");
+        msg.reply("Use !price <market_name> with one of the following markets: '" + pairs.join("','") + "'. ");
         return;
     }
 
@@ -40,9 +36,10 @@ client.on('message', msg => {
                     break;
                 }
             }
+
             if (!found)
             {
-                msg.reply("Currency pair '" + currPair + "' not found. Please try one of the following: " + pairs.join("','"));
+                msg.reply("Market '" + currPair + "' not found. Please try one of the following: '" + pairs.join("','") + "'.");
                 return;
             }
 
@@ -54,13 +51,13 @@ client.on('message', msg => {
             	});
             	res.on("end", () => {
             		body = JSON.parse(body);
-            		msg.reply("Latest Bitstamp price for " + currPair + ": " + pairSymbol[i] + `${body.last}`);
+            		msg.reply("Latest Bitstamp price for '" + currPair + "': " + pairSymbol[i] + `${body.last}`);
             	});
             });
         }
         else
         {
-            msg.reply("Use !price <market_name> with one of the following markets: " + pairs.join("','") + ". ");
+            msg.reply("Use !price <market_name> with one of the following markets: '" + pairs.join("','") + "'. ");
             return;
         }
     }
