@@ -3,9 +3,32 @@ const Discord = require('discord.js');
 const https = require('https');
 
 const client = new Discord.Client();
-const url = "https://www.bitstamp.net/api/v2/ticker/";
-const pairs = ["btcusd", "btceur", "eurusd", "xrpusd", "xrpeur", "xrpbtc", "ltcusd", "ltceur", "ltcbtc", "ethusd", "etheur", "ethbtc", "bchusd", "bcheur", "bchbtc"];
-const pairSymbol = ["$", "€", "$", "$", "€", "BTC", "$", "€", "BTC", "$", "€", "BTC", "$", "€", "BTC" ];
+const exchanges = {"bitstamp": {
+                    "symbolURL": "https://www.bitstamp.net/api/v2/trading-pairs-info/",
+                    "tickerURL": "https://www.bitstamp.net/api/v2/ticker/"
+                   },
+                   "bitfinex": {
+                    "symbolURL": "https://api.bitfinex.com/v1/symbols_details/",
+                    "tickerURL": "https://www.bitstamp.net/api/v2/ticker/"
+                   }];
+var symbols = {};
+
+function getExchangeData(exchange){
+    // https.get(url + currPair, res => {
+    //     res.setEncoding("utf8");
+    //     let body = "";
+    //     res.on("data", data => {
+    //         body += data;
+    //     });
+    //     res.on("end", () => {
+    //         body = JSON.parse(body);
+    //         msg.reply("Latest Bitstamp price for '" + currPair + "': " + pairSymbol[i] + `${body.last}`);
+    //     });
+    // });
+}
+// const url = "https://www.bitstamp.net/api/v2/ticker/";
+// const pairs = ["btcusd", "btceur", "eurusd", "xrpusd", "xrpeur", "xrpbtc", "ltcusd", "ltceur", "ltcbtc", "ethusd", "etheur", "ethbtc", "bchusd", "bcheur", "bchbtc"];
+// const pairSymbol = ["$", "€", "$", "$", "€", "BTC", "$", "€", "BTC", "$", "€", "BTC", "$", "€", "BTC" ];
 //https://www.bitstamp.net/api/
 
 //TODO: add bitfinex and others
