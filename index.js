@@ -1,7 +1,6 @@
 // Discord.js bot
 const Discord = require('discord.js');
 const https = require('https');
-const request = require('request');
 
 const client = new Discord.Client();
 const exchanges = {"bitstamp": {
