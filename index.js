@@ -73,27 +73,10 @@ client.on('ready', () => {
 });
 
 client.on('message', msg => {
-    //console.log("Attempting to execute command '" + msg.content.toString() + "'.");
+    console.log(msg.content);
     if (msg.content === "!update")
     {
-        // Object.keys(exchanges).forEach(function(key) {
-        //     var val = exchanges[key];
-        //     updateExchangeData(val.symbolURL).then(function(body){
-        //         symbols[key] = [];
-        //         body.forEach(function(item) {
-        //             if (val.symbolPropName.length > 0)
-        //                 symbols[key].push(item[val.symbolPropName]);
-        //             else
-        //                 symbols[key].push(item);
-        //         });
-        //         msg.reply(val.fullName + " markets updated: '" + symbols[key].join("', '") + "'.");
-        //         console.log(val.fullName + " markets updated: '" + symbols[key].join("', '") + "'.");
-        //     }, function(error){
-        //         console.log(error);
-        //     });
-        // });
         update(msg);
-        
         return;
     }
 
