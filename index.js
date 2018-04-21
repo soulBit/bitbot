@@ -90,7 +90,7 @@ client.on('message', msg => {
     var content = msg.content.split(" ");
     if (content[0] == "!price")
     {
-        if (content.length !== 3)
+        if (content.length < 3)
         {
             msg.reply("Use !price <exchange> <currency_pair> with one of the following exchanges: '" + Object.keys(exchanges).join("', '") + "'. ");
             return;
@@ -117,7 +117,7 @@ client.on('message', msg => {
             if (!symbols[targetExchange][i])
                 continue;
             
-            console.log(symbols[targetExchange][i] + ":" + targetPair);
+            //console.log(symbols[targetExchange][i] + ":" + targetPair);
 
             if (symbols[targetExchange][i] == targetPair)
             {
