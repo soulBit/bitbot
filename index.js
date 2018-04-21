@@ -2,6 +2,7 @@
 //TODO: implement more exchanges
 //TODO: add more currency pair symbols for bitfinex pairs
 //TODO: automatically update exchange data every 24 hours
+//TODO: error handling when exchange url is unavailable
 
 //API docs
 //https://www.bitstamp.net/api/
@@ -29,10 +30,12 @@ const exchanges = {
     "bitstamp": {
         "fullName": "Bitstamp",
         "symbolURL": "https://www.bitstamp.net/api/v2/trading-pairs-info/",
-        "symbolPropName": "url_symbol",
+        "decodeSymbol": function(obj) {
+            return obj["url_symbol"];
+        },
         "tickerURL": "https://www.bitstamp.net/api/v2/ticker/",
         "tickerPropName": "last",
-        "symbolDecode": function(symbol) {
+        "decodePriceSymbol": function(symbol) {
             if (typeof(symbol) === "undefined" || symbol === null || symbol === "")
                 return "";
 
@@ -67,10 +70,12 @@ const exchanges = {
     "bitfinex": {
         "fullName": "BitFinex",
         "symbolURL": "https://api.bitfinex.com/v1/symbols/",
-        "symbolPropName": "",
+        "decodeSymbol": function(obj) {
+            return obj;
+        },
         "tickerURL": "https://api.bitfinex.com/v1/ticker/",
         "tickerPropName": "last_price",
-        "symbolDecode": function(symbol) {
+        "decodePriceSymbol": function(symbol) {
             if (typeof(symbol) === "undefined" || symbol === null || symbol === "")
                 return "";
 
@@ -139,10 +144,11 @@ function update(msg){
         updateExchangeData(val.symbolURL).then(function(body){
             symbols[key] = [];
             body.forEach(function(item) {
-                if (val.symbolPropName.length > 0)
-                    symbols[key].push(item[val.symbolPropName]);
-                else
-                    symbols[key].push(item);
+                symbols[key].push(val.decodeSymbol(item));
+                // if (val.symbolPropName.length > 0)
+                //     symbols[key].push(item[val.symbolPropName]);
+                // else
+                //     symbols[key].push(item);
             });
             if (msg)
                 msg.reply(val.fullName + " markets updated: '" + symbols[key].join("', '") + "'.");
@@ -262,7 +268,7 @@ client.on('message', msg => {
             res.on("end", () => {
                 body = JSON.parse(body);
 
-                var priceSymbol = exchanges[targetExchange].symbolDecode(targetPair.substr(-3));
+                var priceSymbol = exchanges[targetExchange].decodePriceSymbol(targetPair.substr(-3));
                 msg.reply(`Latest ${exchanges[targetExchange].fullName} price for '${targetPair}': ${priceSymbol}${body[exchanges[targetExchange].tickerPropName]}`);
             });
         });
