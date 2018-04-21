@@ -248,7 +248,7 @@ client.on('message', msg => {
             msg.channel.send("Exchange '" + targetExchange + "' not found. " + marketError);
             return;
         }
-        msg.channel.send("Currency pairs for " + exchanges[targetExchange].fullName + ": '" + symbols[targetExchange].join("', '") + "'.", {split: true});
+        msg.channel.send("Currency pairs for " + exchanges[targetExchange].fullName + ": '" + symbols[targetExchange].join("', '") + "'.", {"split": true});
         return;
     }
 
