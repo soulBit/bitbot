@@ -190,7 +190,7 @@ function update(msg){
             symbols[key] = [];
             exchange.decodeSymbols(body, key);
             if (msg)
-                msg.reply(exchange.fullName + " markets updated: '" + symbols[key].join("', '") + "'.");
+                msg.channel.send(exchange.fullName + " markets updated: '" + symbols[key].join("', '") + "'.");
             console.log(exchange.fullName + " markets updated: '" + symbols[key].join("', '") + "'.");
         }, function(error){
             console.log(error);
@@ -221,12 +221,11 @@ client.on('message', msg => {
 
     if (msg.content === "!help")
     {
-        
         var helpString = `Possible commands:
         "!price <exchange> <currency_pair>" returns the current market price for <currency_pair> from <exchange>. Possible exchanges are: ${exchangeStr}.
         "!market <exchange>" returns the list of possible currency pairs that can be queried from <exchange>. Possible exchanges are: ${exchangeStr}.
         `;
-        msg.reply(helpString);
+        msg.channel.send(helpString, {split: true});
         return;
     }
 
@@ -235,21 +234,21 @@ client.on('message', msg => {
         var marketError = "Use !market <exchange> with one of the following exchanges: " + exchangeStr + ".";
         if (content.length < 2)
         {
-            msg.reply(marketError);
+            msg.channel.send(marketError);
             return;
         }
         var targetExchange = content[1];
         if (typeof targetExchange === "undefined" || targetExchange === null)
         {
-            msg.reply(marketError);
+            msg.channel.send(marketError);
             return;
         }
         if (typeof exchanges[targetExchange] === "undefined" || !exchanges[targetExchange])
         {
-            msg.reply("Exchange '" + targetExchange + "' not found. " + marketError);
+            msg.channel.send("Exchange '" + targetExchange + "' not found. " + marketError);
             return;
         }
-        msg.reply("Currency pairs for " + exchanges[targetExchange].fullName + ": '" + symbols[targetExchange].join("', '") + "'.");
+        msg.channel.send("Currency pairs for " + exchanges[targetExchange].fullName + ": '" + symbols[targetExchange].join("', '") + "'.", {split: true});
         return;
     }
 
@@ -258,19 +257,19 @@ client.on('message', msg => {
         var priceError = "Use !price <exchange> <currency_pair> with one of the following exchanges: " + exchangeStr + ". ";
         if (content.length < 3)
         {
-            msg.reply(priceError);
+            msg.channel.send(priceError);
             return;
         }
 
         var targetExchange = content[1];
         if (typeof targetExchange === "undefined" || targetExchange === null)
         {
-            msg.reply(priceError);
+            msg.channel.send(priceError);
             return;
         }
         if (typeof exchanges[targetExchange] === "undefined" || !exchanges[targetExchange])
         {
-            msg.reply("Exchange '" + targetExchange + "' not found. " + priceError);
+            msg.channel.send("Exchange '" + targetExchange + "' not found. " + priceError);
             return;
         }
 
@@ -278,7 +277,7 @@ client.on('message', msg => {
         if (typeof targetPair === "undefined" || targetPair === null)
         {
             //add code to check if valid exchange
-            msg.reply("you messed up, no currency pair specified");
+            msg.channel.send("you messed up, no currency pair specified");
             return;
         }
 
@@ -299,7 +298,7 @@ client.on('message', msg => {
 
         if (!isSupported)
         {
-            msg.reply("Currency pair '" + targetPair + "' not present for '" + targetExchange + "'. Please use one of the following: '" + symbols[targetExchange].join("', '") + "'. ");
+            msg.channel.send("Currency pair '" + targetPair + "' not present for '" + targetExchange + "'. Please use one of the following: '" + symbols[targetExchange].join("', '") + "'. ", {split: true});
             return;
         }
 
@@ -314,7 +313,7 @@ client.on('message', msg => {
                 body = JSON.parse(body);
 
                 var priceSymbol = exchanges[targetExchange].getPriceSymbol(targetPair.substr(-3));
-                msg.reply(`Latest ${exchanges[targetExchange].fullName} price for '${targetPair}': ${priceSymbol}${body[exchanges[targetExchange].tickerPropName]}`);
+                msg.channel.send(`Latest ${exchanges[targetExchange].fullName} price for '${targetPair}': ${priceSymbol}${body[exchanges[targetExchange].tickerPropName]}`);
             });
         });
     }
