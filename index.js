@@ -109,10 +109,10 @@ client.on('message', msg => {
         }
 
         var isSupported = false;
-        for (var key in symbols[targetExchange])
+        for (var i = 0; i < symbols[targetExchange].length; i++)
         {
-            //console.log(symbols[targetExchange][key] + ":" + targetPair);
-            if (symbols[targetExchange][key] == targetPair)
+            console.log(symbols[targetExchange][i] + ":" + targetPair);
+            if (symbols[targetExchange][i] == targetPair)
             {
                 isSupported = true;
                 break;
