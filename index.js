@@ -204,20 +204,26 @@ client.on('message', msg => {
 
     if (content[0] == "!price")
     {
+        var priceError = "Use !price <exchange> <currency_pair> with one of the following exchanges: " + exchangeStr + ". ";
         if (content.length < 3)
         {
-            msg.reply("Use !price <exchange> <currency_pair> with one of the following exchanges: " + exchangeStr + ". ");
+            msg.reply(priceError);
             return;
         }
 
         var targetExchange = content[1];
-        var targetPair = content[2];
         if (typeof targetExchange === "undefined" || targetExchange === null)
         {
-            //add code to check if valid exchange
-            msg.reply("you messed up, no exchange specified");
+            msg.reply(priceError);
             return;
         }
+        if (typeof exchanges[targetExchange] === "undefined" || !exchanges[targetExchange])
+        {
+            msg.reply("Exchange '" + targetExchange + "' not found. " + priceError);
+            return;
+        }
+
+        var targetPair = content[2];
         if (typeof targetPair === "undefined" || targetPair === null)
         {
             //add code to check if valid exchange
@@ -257,7 +263,7 @@ client.on('message', msg => {
                 body = JSON.parse(body);
 
                 var priceSymbol = exchanges[targetExchange].symbolDecode(targetPair.substr(-3));
-                msg.reply("Latest " + exchanges[targetExchange].fullName + " price for '" + targetPair + "': " + priceSymbol + `${body[exchanges[targetExchange].tickerPropName]}`);
+                msg.reply(`Latest ${exchanges[targetExchange].fullName} price for '${targetPair}': ${priceSymbol}${body[exchanges[targetExchange].tickerPropName]}`);
             });
         });
     }
