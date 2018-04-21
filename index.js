@@ -62,7 +62,7 @@ client.on('message', msg => {
     {
         var output = "";
         Object.keys(exchanges).forEach(function(key) {
-            var val = o[key];
+            var val = exchanges[key];
             updateExchangeData(val.symbolURL).then(function(body){
                 symbols[key] = [];
                 body.forEach(function(item) {
