@@ -37,7 +37,7 @@ const exchanges = {
         },
         "tickerURL": "https://www.bitstamp.net/api/v2/ticker/",
         "tickerPropName": "last",
-        "decodePriceSymbol": function(symbol) {
+        "getPriceSymbol": function(symbol) {
             if (typeof(symbol) === "undefined" || symbol === null || symbol === "")
                 return "";
 
@@ -79,7 +79,7 @@ const exchanges = {
         },
         "tickerURL": "https://api.bitfinex.com/v1/ticker/",
         "tickerPropName": "last_price",
-        "decodePriceSymbol": function(symbol) {
+        "getPriceSymbol": function(symbol) {
             if (typeof(symbol) === "undefined" || symbol === null || symbol === "")
                 return "";
 
@@ -110,6 +110,47 @@ const exchanges = {
                     break;
             }
         }
+    },
+    "binance": {
+        "fullName": "Binance",
+        "symbolURL": "https://api.binance.com/api/v1/exchangeInfo/",
+        "decodeSymbols": function(obj, exchange) {
+            obj.symbols.forEach(function(item) {
+                symbols[exchange].push(item.symbol);
+            });
+        },
+        "tickerURL": "https://api.binance.com/api/v3/ticker/price?symbol=",
+        "tickerPropName": "price",
+        "getPriceSymbol": function(symbol){
+            if (typeof(symbol) === "undefined" || symbol === null || symbol === "")
+                return "";
+
+            switch(symbol) {
+                case "eur":
+                    return priceSymbols.euro;
+                    break;
+                case "usd":
+                    return priceSymbols.dollar;
+                    break;
+                case "btc":
+                    return priceSymbols.bitcoin;
+                    break;
+                case "ltc":
+                    return priceSymbols.litecoin;
+                    break;
+                case "eth":
+                    return priceSymbols.ethereum;
+                    break;
+                case "xrp":
+                    return priceSymbols.ripple;
+                    break;
+                case "bch":
+                    return priceSymbols.bitcoincash;
+                    break;
+                default:
+                    return symbol.toUpperCase();
+                    break;
+        }       
     }
 };
 
@@ -143,16 +184,13 @@ function updateExchangeData(exchange){
 
 function update(msg){
     Object.keys(exchanges).forEach(function(key) {
-        var val = exchanges[key];
+        var exchange = exchanges[key];
         updateExchangeData(val.symbolURL).then(function(body){
             symbols[key] = [];
-            // body.forEach(function(item) {
-            //     symbols[key].push(val.decodeSymbol(item));
-            // });
-            val.decodeSymbols(body, key);
+            exchange.decodeSymbols(body, key);
             if (msg)
-                msg.reply(val.fullName + " markets updated: '" + symbols[key].join("', '") + "'.");
-            console.log(val.fullName + " markets updated: '" + symbols[key].join("', '") + "'.");
+                msg.reply(exchange.fullName + " markets updated: '" + symbols[key].join("', '") + "'.");
+            console.log(exchange.fullName + " markets updated: '" + symbols[key].join("', '") + "'.");
         }, function(error){
             console.log(error);
         });
@@ -274,7 +312,7 @@ client.on('message', msg => {
             res.on("end", () => {
                 body = JSON.parse(body);
 
-                var priceSymbol = exchanges[targetExchange].decodePriceSymbol(targetPair.substr(-3));
+                var priceSymbol = exchanges[targetExchange].getPriceSymbol(targetPair.substr(-3));
                 msg.reply(`Latest ${exchanges[targetExchange].fullName} price for '${targetPair}': ${priceSymbol}${body[exchanges[targetExchange].tickerPropName]}`);
             });
         });
