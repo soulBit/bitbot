@@ -162,7 +162,9 @@ client.on('ready', () => {
 
 client.on('message', msg => {
     var content = msg.content.split(" ");
-    console.log(content.join(" "));
+    if (content[0].indexOf("!") == 0)
+        console.log(content.join(" "));
+
     if (content[0] === "!update")
     {
         update(msg);
