@@ -13,12 +13,12 @@ const exchanges = {"bitstamp": {
                    }};
 var symbols = {};
 
-function getBitstampData(){
+function updateExchangeData(exchange){
     return new Promise(function(resolve, reject) {
-        var req = https.get(exchanges.bitstamp.symbolURL, res => {
-            // if (res.statusCode < 200 || res.statusCode >= 300) {
-            //     return reject(new Error('statusCode=' + res.statusCode));
-            // }
+        var req = https.get(exchange, res => {
+            if (res.statusCode < 200 || res.statusCode >= 300) {
+                return reject(new Error('statusCode=' + res.statusCode));
+            }
 
             res.setEncoding("utf8");
             let body = "";
@@ -26,12 +26,6 @@ function getBitstampData(){
                 body += data;
             });
             res.on("end", () => {
-                // body = JSON.parse(body);
-                // //msg.reply("Latest Bitstamp price for '" + currPair + "': " + pairSymbol[i] + `${body.last}`);
-                // symbols.bitstamp = [];
-                // body.forEach(function(symbol) {
-                //     symbols.bitstamp.push(symbol.url_symbol);
-                // });
                 try {
                     body = JSON.parse(body);
                 } catch(e) {
@@ -40,11 +34,11 @@ function getBitstampData(){
                 resolve(body);
             });
         });
-         // reject on request error
-        // req.on('error', function(err) {
-        //     // This is not a "Second reject", just a different sort of failure
-        //     reject(err);
-        // });   
+        // reject on request error
+        req.on('error', function(err) {
+            // This is not a "Second reject", just a different sort of failure
+            reject(err);
+        });   
     });
 }
 
@@ -65,7 +59,7 @@ client.on('ready', () => {
 client.on('message', msg => {
     if (msg.content === "!update")
     {
-        getBitstampData().then(function(body){
+        updateExchangeData(exchanges.bitstamp.symbolURL).then(function(body){
             symbols.bitstamp = [];
             body.forEach(function(item) {
                 symbols.bitstamp.push(item.url_symbol);
