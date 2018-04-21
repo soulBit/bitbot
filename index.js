@@ -8,13 +8,15 @@ const exchanges = {"bitstamp": {
                     "fullName": "Bitstamp",
                     "symbolURL": "https://www.bitstamp.net/api/v2/trading-pairs-info/",
                     "symbolPropName": "url_symbol",
-                    "tickerURL": "https://www.bitstamp.net/api/v2/ticker/"
+                    "tickerURL": "https://www.bitstamp.net/api/v2/ticker/",
+                    "tickerPropName": "last"
                    },
                    "bitfinex": {
                     "fullName": "BitFinex",
                     "symbolURL": "https://api.bitfinex.com/v1/symbols_details/",
                     "symbolPropName": "pair",
-                    "tickerURL": "https://www.bitstamp.net/api/v2/ticker/"
+                    "tickerURL": "https://www.bitstamp.net/api/v2/ticker/",
+                    "tickerPropName": "last"
                    }};
 
 
@@ -76,10 +78,46 @@ client.on('message', msg => {
 
     // if (msg.content === "!help")
     // {
-    //     msg.reply("Use !price <market_name> with one of the following markets: '" + pairs.join("','") + "'. ");
+    //     msg.reply("Use !price <exchange> <currency_pair> with one of the following exchanges: '" + pairs.join("','") + "'. ");
     //     return;
     // }
 
+    var content = msg.content.split(" ");
+    if (content[0] == "!price")
+    {
+        if (content.length !== 3)
+        {
+            msg.reply("Use !price <exchange> <currency_pair> with one of the following exchanges: '" + Object.keys(exchanges).join("', '") + "'. ");
+            return;
+        }
+
+        var targetExchange = content[1];
+        var targetPair = content[2];
+        if (typeof targetExchange === "undefined" || targetExchange === null)
+        {
+            //add code to check if valid exchange
+            msg.reply("you messed up, no exchange specified");
+            return;
+        }
+        if (typeof targetPair === "undefined" || targetPair === null)
+        {
+            //add code to check if valid exchange
+            msg.reply("you messed up, no currency pair specified");
+            return;
+        }
+
+        https.get(exchanges[targetExchange].tickerURL + targetPair, res => {
+            res.setEncoding("utf8");
+            let body = "";
+            res.on("data", data => {
+                body += data;
+            });
+            res.on("end", () => {
+                body = JSON.parse(body);
+                msg.reply("Latest " + exchanges[targetExchange].fullName + " price for '" + targetPair + "': " + "? " + `${body[exchanges[targetExchange].tickerPropName]}`);
+            });
+        });
+    }
     // var content = msg.content.split(" ");
     // if (content[0] == "!price") {
     //     var currPair = content[1];
