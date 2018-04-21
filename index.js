@@ -2,16 +2,21 @@
 const Discord = require('discord.js');
 const https = require('https');
 
+var symbols = {};
 const client = new Discord.Client();
 const exchanges = {"bitstamp": {
+                    "fullName": "Bitstamp",
                     "symbolURL": "https://www.bitstamp.net/api/v2/trading-pairs-info/",
+                    "symbolPropName": "url_symbol",
                     "tickerURL": "https://www.bitstamp.net/api/v2/ticker/"
                    },
                    "bitfinex": {
+                    "fullName": "BitFinex",
                     "symbolURL": "https://api.bitfinex.com/v1/symbols_details/",
+                    "symbolPropName": "pair",
                     "tickerURL": "https://www.bitstamp.net/api/v2/ticker/"
                    }};
-var symbols = {};
+
 
 function updateExchangeData(exchange){
     return new Promise(function(resolve, reject) {
@@ -42,14 +47,10 @@ function updateExchangeData(exchange){
     });
 }
 
-
-
-// const url = "https://www.bitstamp.net/api/v2/ticker/";
 // const pairs = ["btcusd", "btceur", "eurusd", "xrpusd", "xrpeur", "xrpbtc", "ltcusd", "ltceur", "ltcbtc", "ethusd", "etheur", "ethbtc", "bchusd", "bcheur", "bchbtc"];
 // const pairSymbol = ["$", "€", "$", "$", "€", "BTC", "$", "€", "BTC", "$", "€", "BTC", "$", "€", "BTC" ];
-//https://www.bitstamp.net/api/
 
-//TODO: add bitfinex and others
+//https://www.bitstamp.net/api/
 //https://docs.bitfinex.com/v2/docs/ws-general#section-supported-pairs
 
 client.on('ready', () => {
@@ -59,13 +60,19 @@ client.on('ready', () => {
 client.on('message', msg => {
     if (msg.content === "!update")
     {
-        updateExchangeData(exchanges.bitstamp.symbolURL).then(function(body){
-            symbols.bitstamp = [];
-            body.forEach(function(item) {
-                symbols.bitstamp.push(item.url_symbol);
+        var output = "";
+        Object.keys(exchanges).forEach(function(key) {
+            var val = o[key];
+            updateExchangeData(val.symbolURL).then(function(body){
+                symbols[key] = [];
+                body.forEach(function(item) {
+                    symbols[key].push(item[val.symbolPropName]);
+                });
+                output += val.fullName + " markets updated: '" + symbols[key].join("', '") + "'. \n";
             });
-            msg.reply("Bitstamp markets updated: '" + symbols.bitstamp.join("','") + "'. ");
         });
+        msg.reply(output);
+        return;
     }
 
     // if (msg.content === "!help")
