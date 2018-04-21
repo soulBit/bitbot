@@ -247,7 +247,7 @@ client.on('message', msg => {
                 body = JSON.parse(body);
 
                 var priceSymbol = exchanges[targetExchange].symbolDecode(targetPair.substr(-3));
-                msg.reply("Latest " + exchanges[targetExchange].fullName + " price for '" + targetPair + "': " + `${body[exchanges[targetExchange].tickerPropName]}` + priceSymbol);
+                msg.reply("Latest " + exchanges[targetExchange].fullName + " price for '" + targetPair + "': " + priceSymbol + `${body[exchanges[targetExchange].tickerPropName]}`);
             });
         });
     }
