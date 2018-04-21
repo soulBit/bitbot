@@ -2,7 +2,10 @@
 const Discord = require('discord.js');
 const https = require('https');
 
+//format is as below -
+//"exchangeName": ["btcusd", "xmrbtc"]
 var symbols = {};
+
 const client = new Discord.Client();
 const exchanges = {"bitstamp": {
                     "fullName": "Bitstamp",
@@ -76,7 +79,7 @@ client.on('ready', () => {
 client.on('message', msg => {
     var content = msg.content.split(" ");
     console.log(content.join(" "));
-    if (msg.content === "!update")
+    if (content[0] === "!update")
     {
         update(msg);
         return;
@@ -88,6 +91,22 @@ client.on('message', msg => {
     //     return;
     // }
 
+    if (content[0] == "!market")
+    {
+        if (content.length < 2)
+        {
+            msg.reply("Use !market <exchange> with one of the following exchanges: '" + Object.keys(exchanges).join("', '") + "'. ");
+            return;
+        }
+        var targetExchange = content[1];
+        if (typeof targetExchange === "undefined" || targetExchange === null)
+        {
+            msg.reply("you messed up, no exchange specified");
+            return;
+        }
+        msg.reply("Currency pairs for " + exchanges[targetExchange].fullName + ": '" + symbols[targetExchange].join("', '") + "'.");
+        return;
+    }
 
     if (content[0] == "!price")
     {
