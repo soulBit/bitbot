@@ -30,8 +30,10 @@ const exchanges = {
     "bitstamp": {
         "fullName": "Bitstamp",
         "symbolURL": "https://www.bitstamp.net/api/v2/trading-pairs-info/",
-        "decodeSymbol": function(obj) {
-            return obj["url_symbol"];
+        "decodeSymbols": function(obj) {
+            obj.forEach(function(item) {
+                symbols[key].push(item["url_symbol"]);
+            });
         },
         "tickerURL": "https://www.bitstamp.net/api/v2/ticker/",
         "tickerPropName": "last",
@@ -70,8 +72,10 @@ const exchanges = {
     "bitfinex": {
         "fullName": "BitFinex",
         "symbolURL": "https://api.bitfinex.com/v1/symbols/",
-        "decodeSymbol": function(obj) {
-            return obj;
+        "decodeSymbols": function(obj) {
+            obj.forEach(function(item) {
+                symbols[key].push(item);
+            });
         },
         "tickerURL": "https://api.bitfinex.com/v1/ticker/",
         "tickerPropName": "last_price",
@@ -109,7 +113,6 @@ const exchanges = {
     }
 };
 
-
 function updateExchangeData(exchange){
     console.log("Updating: " + exchange);
     return new Promise(function(resolve, reject) {
@@ -143,13 +146,10 @@ function update(msg){
         var val = exchanges[key];
         updateExchangeData(val.symbolURL).then(function(body){
             symbols[key] = [];
-            body.forEach(function(item) {
-                symbols[key].push(val.decodeSymbol(item));
-                // if (val.symbolPropName.length > 0)
-                //     symbols[key].push(item[val.symbolPropName]);
-                // else
-                //     symbols[key].push(item);
-            });
+            // body.forEach(function(item) {
+            //     symbols[key].push(val.decodeSymbol(item));
+            // });
+            val.decodeSymbols(body);
             if (msg)
                 msg.reply(val.fullName + " markets updated: '" + symbols[key].join("', '") + "'.");
             console.log(val.fullName + " markets updated: '" + symbols[key].join("', '") + "'.");
@@ -193,15 +193,21 @@ client.on('message', msg => {
 
     if (content[0] == "!market")
     {
+        var marketError = "Use !market <exchange> with one of the following exchanges: " + exchangeStr + ".";
         if (content.length < 2)
         {
-            msg.reply("Use !market <exchange> with one of the following exchanges: " + exchangeStr + ". ");
+            msg.reply(marketError);
             return;
         }
         var targetExchange = content[1];
         if (typeof targetExchange === "undefined" || targetExchange === null)
         {
-            msg.reply("you messed up, no exchange specified");
+            msg.reply(marketError);
+            return;
+        }
+        if (typeof exchanges[targetExchange] === "undefined" || !exchanges[targetExchange])
+        {
+            msg.reply("Exchange '" + targetExchange + "' not found. " + marketError);
             return;
         }
         msg.reply("Currency pairs for " + exchanges[targetExchange].fullName + ": '" + symbols[targetExchange].join("', '") + "'.");
