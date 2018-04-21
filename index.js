@@ -150,7 +150,8 @@ const exchanges = {
                 default:
                     return symbol.toUpperCase();
                     break;
-        }       
+            }       
+        }
     }
 };
 
