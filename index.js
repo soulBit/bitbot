@@ -42,10 +42,10 @@ function getBitstampData(){
             });
         });
          // reject on request error
-        req.on('error', function(err) {
-            // This is not a "Second reject", just a different sort of failure
-            reject(err);
-        });   
+        // req.on('error', function(err) {
+        //     // This is not a "Second reject", just a different sort of failure
+        //     reject(err);
+        // });   
     });
 }
 
@@ -68,8 +68,8 @@ client.on('message', msg => {
     {
         getBitstampData().then(function(body){
             symbols.bitstamp = [];
-            body.forEach(function(symbol) {
-                symbols.bitstamp.push(symbol.url_symbol);
+            body.forEach(function(item) {
+                symbols.bitstamp.push(item.url_symbol);
             });
             msg.reply("Bitstamp markets updated: '" + symbols.bitstamp.join("','") + "'. ");
         });
