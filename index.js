@@ -60,7 +60,7 @@ client.on('ready', () => {
 });
 
 client.on('message', msg => {
-    console.log("Attempting to execute command '" + msg.content + "'.");
+    console.log("Attempting to execute command '" + msg.content.toString() + "'.");
     if (msg.content === "!update")
     {
         Object.keys(exchanges).forEach(function(key) {
@@ -111,6 +111,7 @@ client.on('message', msg => {
         var isSupported = false;
         for (var key in symbols[targetExchange])
         {
+            console.log(key + ":" + targetPair);
             if (key == targetPair)
             {
                 isSupported = true;
@@ -120,7 +121,7 @@ client.on('message', msg => {
 
         if (!isSupported)
         {
-            msg.reply("Currency pair '" + targetPair + "' not present for '" + targetExchange + "'. Please use one of the following: '" + symbols[targetExchange].join("', '") + ". ");
+            msg.reply("Currency pair '" + targetPair + "' not present for '" + targetExchange + "'. Please use one of the following: '" + symbols[targetExchange].join("', '") + "'. ");
             return;
         }
 
