@@ -13,10 +13,10 @@ const exchanges = {"bitstamp": {
                    },
                    "bitfinex": {
                     "fullName": "BitFinex",
-                    "symbolURL": "https://api.bitfinex.com/v1/symbols_details/",
-                    "symbolPropName": "pair",
-                    "tickerURL": "https://www.bitstamp.net/api/v2/ticker/",
-                    "tickerPropName": "last"
+                    "symbolURL": "https://api.bitfinex.com/v1/symbols/",
+                    "symbolPropName": "",
+                    "tickerURL": "https://api.bitfinex.com/v1/ticker/",
+                    "tickerPropName": "last_price"
                    }};
 
 
@@ -68,7 +68,10 @@ client.on('message', msg => {
             updateExchangeData(val.symbolURL).then(function(body){
                 symbols[key] = [];
                 body.forEach(function(item) {
-                    symbols[key].push(item[val.symbolPropName]);
+                    if (val.symbolPropName.length > 0)
+                        symbols[key].push(item[val.symbolPropName]);
+                    else
+                        symbols[key].push(item);
                 });
                 msg.reply(val.fullName + " markets updated: '" + symbols[key].join("', '") + "'.");
                 console.log(val.fullName + " markets updated: '" + symbols[key].join("', '") + "'.");
@@ -128,7 +131,7 @@ client.on('message', msg => {
             msg.reply("Currency pair '" + targetPair + "' not present for '" + targetExchange + "'. Please use one of the following: '" + symbols[targetExchange].join("', '") + "'. ");
             return;
         }
-
+        console.log("Attempting to load url: '" + exchanges[targetExchange].tickerURL + targetPair + "'.");
         https.get(exchanges[targetExchange].tickerURL + targetPair, res => {
             res.setEncoding("utf8");
             let body = "";
