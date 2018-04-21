@@ -8,6 +8,7 @@
 //API docs
 //https://www.bitstamp.net/api/
 //https://docs.bitfinex.com/v2/docs/ws-general#section-supported-pairs
+//https://github.com/binance-exchange/binance-official-api-docs/blob/master/rest-api.md
 
 const Discord = require('discord.js');
 const https = require('https');
