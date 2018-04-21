@@ -73,7 +73,8 @@ client.on('ready', () => {
 });
 
 client.on('message', msg => {
-    console.log(msg.content);
+    var content = msg.content.split(" ");
+    console.log(content.join(" "));
     if (msg.content === "!update")
     {
         update(msg);
@@ -86,7 +87,7 @@ client.on('message', msg => {
     //     return;
     // }
 
-    var content = msg.content.split(" ");
+
     if (content[0] == "!price")
     {
         if (content.length < 3)
