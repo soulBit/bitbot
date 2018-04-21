@@ -1,4 +1,13 @@
 // Discord.js bot
+//TODO: implement more exchanges
+//TODO: add more currency pair symbols for bitfinex pairs
+//TODO: automatically determine currency pair symbol based on last 3 charcters of the currency pair id
+//TODO: automatically update exchange data every 24 hours
+
+//API docs
+//https://www.bitstamp.net/api/
+//https://docs.bitfinex.com/v2/docs/ws-general#section-supported-pairs
+
 const Discord = require('discord.js');
 const https = require('https');
 
@@ -7,20 +16,94 @@ const https = require('https');
 var symbols = {};
 
 const client = new Discord.Client();
-const exchanges = {"bitstamp": {
-                    "fullName": "Bitstamp",
-                    "symbolURL": "https://www.bitstamp.net/api/v2/trading-pairs-info/",
-                    "symbolPropName": "url_symbol",
-                    "tickerURL": "https://www.bitstamp.net/api/v2/ticker/",
-                    "tickerPropName": "last"
-                   },
-                   "bitfinex": {
-                    "fullName": "BitFinex",
-                    "symbolURL": "https://api.bitfinex.com/v1/symbols/",
-                    "symbolPropName": "",
-                    "tickerURL": "https://api.bitfinex.com/v1/ticker/",
-                    "tickerPropName": "last_price"
-                   }};
+const priceSymbols = {
+    "euro": "€",
+    "dollar": "$",
+    "bitcoin": "BTC",
+    "monero": "XMR",
+    "litecoin": "LTC",
+    "ripple": "XRP",
+    "ethereum": "ETH",
+    "bitcoincash": "BCH"
+};
+const exchanges = {
+    "bitstamp": {
+        "fullName": "Bitstamp",
+        "symbolURL": "https://www.bitstamp.net/api/v2/trading-pairs-info/",
+        "symbolPropName": "url_symbol",
+        "tickerURL": "https://www.bitstamp.net/api/v2/ticker/",
+        "tickerPropName": "last",
+        "symbolDecode": function(symbol) {
+            if (typeof(symbol) === "undefined" || symbol === null || symbol === "")
+                return "";
+
+            switch(symbol) {
+                case "eur":
+                    return priceSymbols.euro;
+                    break;
+                case "usd":
+                    return priceSymbols.dollar;
+                    break;
+                case "btc":
+                    return priceSymbols.bitcoin;
+                    break;
+                case "ltc":
+                    return priceSymbols.litecoin;
+                    break;
+                case "eth":
+                    return priceSymbols.ethereum;
+                    break;
+                case "xrp":
+                    return priceSymbols.ripple;
+                    break;
+                case "bch":
+                    return priceSymbols.bitcoincash;
+                    break;
+                default:
+                    return symbol.toUpperCase();
+                    break;
+            }
+        }
+    },
+    "bitfinex": {
+        "fullName": "BitFinex",
+        "symbolURL": "https://api.bitfinex.com/v1/symbols/",
+        "symbolPropName": "",
+        "tickerURL": "https://api.bitfinex.com/v1/ticker/",
+        "tickerPropName": "last_price",
+        "symbolDecode": function(symbol) {
+            if (typeof(symbol) === "undefined" || symbol === null || symbol === "")
+                return "";
+
+            switch(symbol) {
+                case "eur":
+                    return priceSymbols.euro;
+                    break;
+                case "usd":
+                    return priceSymbols.dollar;
+                    break;
+                case "btc":
+                    return priceSymbols.bitcoin;
+                    break;
+                case "ltc":
+                    return priceSymbols.litecoin;
+                    break;
+                case "eth":
+                    return priceSymbols.ethereum;
+                    break;
+                case "xrp":
+                    return priceSymbols.ripple;
+                    break;
+                case "bch":
+                    return priceSymbols.bitcoincash;
+                    break;
+                default:
+                    return symbol.toUpperCase();
+                    break;
+            }
+        }
+    }
+};
 
 
 function updateExchangeData(exchange){
@@ -71,6 +154,7 @@ function update(msg){
     });
 }
 
+//bind events
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
     update();
@@ -151,6 +235,7 @@ client.on('message', msg => {
             msg.reply("Currency pair '" + targetPair + "' not present for '" + targetExchange + "'. Please use one of the following: '" + symbols[targetExchange].join("', '") + "'. ");
             return;
         }
+
         console.log("Attempting to load url: '" + exchanges[targetExchange].tickerURL + targetPair + "'.");
         https.get(exchanges[targetExchange].tickerURL + targetPair, res => {
             res.setEncoding("utf8");
@@ -160,7 +245,9 @@ client.on('message', msg => {
             });
             res.on("end", () => {
                 body = JSON.parse(body);
-                msg.reply("Latest " + exchanges[targetExchange].fullName + " price for '" + targetPair + "': " + "? " + `${body[exchanges[targetExchange].tickerPropName]}`);
+
+                var priceSymbol = exchanges[targetExchange].symbolDecode(targetPair.substr(-3));
+                msg.reply("Latest " + exchanges[targetExchange].fullName + " price for '" + targetPair + "': " + `${body[exchanges[targetExchange].tickerPropName]}` + priceSymbol);
             });
         });
     }
