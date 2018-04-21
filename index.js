@@ -52,6 +52,12 @@ function updateExchangeData(exchange){
 // const pairs = ["btcusd", "btceur", "eurusd", "xrpusd", "xrpeur", "xrpbtc", "ltcusd", "ltceur", "ltcbtc", "ethusd", "etheur", "ethbtc", "bchusd", "bcheur", "bchbtc"];
 // const pairSymbol = ["$", "€", "$", "$", "€", "BTC", "$", "€", "BTC", "$", "€", "BTC", "$", "€", "BTC" ];
 
+
+//TODO: implement more exchanges
+//TODO: automatically determine currency pair symbol based on last 3 charcters of the currency pair id
+//TODO: automatically update exchange data on bot redeploy
+//TODO: automatically update exchange data every 24 hours
+
 //https://www.bitstamp.net/api/
 //https://docs.bitfinex.com/v2/docs/ws-general#section-supported-pairs
 
