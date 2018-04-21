@@ -4,6 +4,7 @@
 //TODO: automatically update exchange data every 24 hours
 //TODO: error handling when exchange url is unavailable
 
+//https://gist.github.com/eslachance/3349734a98d30011bb202f47342601d3
 //API docs
 //https://www.bitstamp.net/api/
 //https://docs.bitfinex.com/v2/docs/ws-general#section-supported-pairs
@@ -155,6 +156,18 @@ const exchanges = {
     }
 };
 
+function sendMessage(msg, channel)
+{
+    if (msg.length >= 2000)
+    {
+        msg = Discord.splitMessage(msg, {maxLength: 1500});
+        for (var i = 0; i < msg.length; i++)
+            channel.send(msg[i]);
+    }
+    else
+        channel.send(msg);
+}
+
 function updateExchangeData(exchange){
     console.log("Updating: " + exchange);
     return new Promise(function(resolve, reject) {
@@ -225,7 +238,7 @@ client.on('message', msg => {
         "!price <exchange> <currency_pair>" returns the current market price for <currency_pair> from <exchange>. Possible exchanges are: ${exchangeStr}.
         "!market <exchange>" returns the list of possible currency pairs that can be queried from <exchange>. Possible exchanges are: ${exchangeStr}.
         `;
-        msg.channel.send(helpString, {split: true});
+        sendMessage(helpString, msg.channel);
         return;
     }
 
@@ -234,21 +247,21 @@ client.on('message', msg => {
         var marketError = "Use !market <exchange> with one of the following exchanges: " + exchangeStr + ".";
         if (content.length < 2)
         {
-            msg.channel.send(marketError);
+            sendMessage(marketError, msg.channel);
             return;
         }
         var targetExchange = content[1];
         if (typeof targetExchange === "undefined" || targetExchange === null)
         {
-            msg.channel.send(marketError);
+            sendMessage(marketError, msg.channel);
             return;
         }
         if (typeof exchanges[targetExchange] === "undefined" || !exchanges[targetExchange])
         {
-            msg.channel.send("Exchange '" + targetExchange + "' not found. " + marketError);
+            sendMessage("Exchange '" + targetExchange + "' not found. " + marketError, msg.channel);
             return;
         }
-        msg.channel.send("Currency pairs for " + exchanges[targetExchange].fullName + ": '" + symbols[targetExchange].join("', '") + "'.", {"split": true});
+        sendMessage("Currency pairs for " + exchanges[targetExchange].fullName + ": '" + symbols[targetExchange].join("', '") + "'.", msg.channel);
         return;
     }
 
@@ -257,19 +270,19 @@ client.on('message', msg => {
         var priceError = "Use !price <exchange> <currency_pair> with one of the following exchanges: " + exchangeStr + ". ";
         if (content.length < 3)
         {
-            msg.channel.send(priceError);
+            sendMessage(priceError, msg.channel);
             return;
         }
 
         var targetExchange = content[1];
         if (typeof targetExchange === "undefined" || targetExchange === null)
         {
-            msg.channel.send(priceError);
+            sendMessage(priceError, msg.channel);
             return;
         }
         if (typeof exchanges[targetExchange] === "undefined" || !exchanges[targetExchange])
         {
-            msg.channel.send("Exchange '" + targetExchange + "' not found. " + priceError);
+            sendMessage("Exchange '" + targetExchange + "' not found. " + priceError, msg.channel);
             return;
         }
 
@@ -277,7 +290,7 @@ client.on('message', msg => {
         if (typeof targetPair === "undefined" || targetPair === null)
         {
             //add code to check if valid exchange
-            msg.channel.send("you messed up, no currency pair specified");
+            sendMessage("No currency pair specified. " + priceError, msg.channel);
             return;
         }
 
@@ -298,7 +311,7 @@ client.on('message', msg => {
 
         if (!isSupported)
         {
-            msg.channel.send("Currency pair '" + targetPair + "' not present for '" + targetExchange + "'. Please use one of the following: '" + symbols[targetExchange].join("', '") + "'. ", {split: true});
+            sendMessage("Currency pair '" + targetPair + "' not present for '" + targetExchange + "'. Please use one of the following: '" + symbols[targetExchange].join("', '") + "'. ", msg.channel);
             return;
         }
 
@@ -313,7 +326,7 @@ client.on('message', msg => {
                 body = JSON.parse(body);
 
                 var priceSymbol = exchanges[targetExchange].getPriceSymbol(targetPair.substr(-3));
-                msg.channel.send(`Latest ${exchanges[targetExchange].fullName} price for '${targetPair}': ${priceSymbol}${body[exchanges[targetExchange].tickerPropName]}`);
+                sendMessage(`Latest ${exchanges[targetExchange].fullName} price for '${targetPair}': ${priceSymbol}${body[exchanges[targetExchange].tickerPropName]}`, msg.channel);
             });
         });
     }
