@@ -186,7 +186,7 @@ function updateExchangeData(exchange){
 function update(msg){
     Object.keys(exchanges).forEach(function(key) {
         var exchange = exchanges[key];
-        updateExchangeData(val.symbolURL).then(function(body){
+        updateExchangeData(exchange.symbolURL).then(function(body){
             symbols[key] = [];
             exchange.decodeSymbols(body, key);
             if (msg)
