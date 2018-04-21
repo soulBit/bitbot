@@ -21,6 +21,7 @@ const exchanges = {"bitstamp": {
 
 
 function updateExchangeData(exchange){
+    console.log("Updating: " + exchange);
     return new Promise(function(resolve, reject) {
         var req = https.get(exchange, res => {
             if (res.statusCode < 200 || res.statusCode >= 300) {
