@@ -1,5 +1,5 @@
 // Discord.js bot
-//TODO: implement more exchanges
+//TODO: fix binance issues with USDT and uppercase names, message splitting
 //TODO: add more currency pair symbols for bitfinex pairs
 //TODO: automatically update exchange data every 24 hours
 //TODO: error handling when exchange url is unavailable
@@ -111,49 +111,49 @@ const exchanges = {
                     break;
             }
         }
-    },
-    "binance": {
-        "fullName": "Binance",
-        "symbolURL": "https://api.binance.com/api/v1/exchangeInfo",
-        "decodeSymbols": function(obj, exchange) {
-            obj.symbols.forEach(function(item) {
-                symbols[exchange].push(item.symbol);
-            });
-        },
-        "tickerURL": "https://api.binance.com/api/v3/ticker/price?symbol=",
-        "tickerPropName": "price",
-        "getPriceSymbol": function(symbol){
-            if (typeof(symbol) === "undefined" || symbol === null || symbol === "")
-                return "";
+    }//,
+    // "binance": {
+    //     "fullName": "Binance",
+    //     "symbolURL": "https://api.binance.com/api/v1/exchangeInfo",
+    //     "decodeSymbols": function(obj, exchange) {
+    //         obj.symbols.forEach(function(item) {
+    //             symbols[exchange].push(item.symbol);
+    //         });
+    //     },
+    //     "tickerURL": "https://api.binance.com/api/v3/ticker/price?symbol=",
+    //     "tickerPropName": "price",
+    //     "getPriceSymbol": function(symbol){
+    //         if (typeof(symbol) === "undefined" || symbol === null || symbol === "")
+    //             return "";
 
-            switch(symbol) {
-                case "eur":
-                    return priceSymbols.euro;
-                    break;
-                case "usd":
-                    return priceSymbols.dollar;
-                    break;
-                case "btc":
-                    return priceSymbols.bitcoin;
-                    break;
-                case "ltc":
-                    return priceSymbols.litecoin;
-                    break;
-                case "eth":
-                    return priceSymbols.ethereum;
-                    break;
-                case "xrp":
-                    return priceSymbols.ripple;
-                    break;
-                case "bch":
-                    return priceSymbols.bitcoincash;
-                    break;
-                default:
-                    return symbol.toUpperCase();
-                    break;
-            }       
-        }
-    }
+    //         switch(symbol) {
+    //             case "eur":
+    //                 return priceSymbols.euro;
+    //                 break;
+    //             case "usd":
+    //                 return priceSymbols.dollar;
+    //                 break;
+    //             case "btc":
+    //                 return priceSymbols.bitcoin;
+    //                 break;
+    //             case "ltc":
+    //                 return priceSymbols.litecoin;
+    //                 break;
+    //             case "eth":
+    //                 return priceSymbols.ethereum;
+    //                 break;
+    //             case "xrp":
+    //                 return priceSymbols.ripple;
+    //                 break;
+    //             case "bch":
+    //                 return priceSymbols.bitcoincash;
+    //                 break;
+    //             default:
+    //                 return symbol.toUpperCase();
+    //                 break;
+    //         }       
+    //     }
+    // }
 };
 
 function sendMessage(msg, channel)
