@@ -177,10 +177,9 @@ client.on('message', msg => {
     if (msg.content === "!help")
     {
         
-        var helpString = `
-            Supported commands:
-            !price <exchange> <currency_pair> - returns the current market price for <currency_pair> from <exchange>. Possible exchanges are: ${exchangeStr}.
-            !market <exchange> - returns the list of possible currency pairs that can be queried from <exchange>. Possible exchanges are: ${exchangeStr}.
+        var helpString = `Possible commands:
+        "!price <exchange> <currency_pair>" returns the current market price for <currency_pair> from <exchange>. Possible exchanges are: ${exchangeStr}.
+        "!market <exchange>" returns the list of possible currency pairs that can be queried from <exchange>. Possible exchanges are: ${exchangeStr}.
         `;
         msg.reply(helpString);
         return;
