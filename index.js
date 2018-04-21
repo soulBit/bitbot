@@ -160,7 +160,7 @@ function sendMessage(msg, channel)
 {
     if (msg.length >= 2000)
     {
-        msg = Discord.splitMessage(msg, {maxLength: 1500});
+        msg = msg.match(/.{1,1500}/g);
         for (var i = 0; i < msg.length; i++)
             channel.send(msg[i]);
     }
