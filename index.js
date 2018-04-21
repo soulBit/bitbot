@@ -30,9 +30,9 @@ const exchanges = {
     "bitstamp": {
         "fullName": "Bitstamp",
         "symbolURL": "https://www.bitstamp.net/api/v2/trading-pairs-info/",
-        "decodeSymbols": function(obj) {
+        "decodeSymbols": function(obj, exchange) {
             obj.forEach(function(item) {
-                symbols[key].push(item["url_symbol"]);
+                symbols[exchange].push(item["url_symbol"]);
             });
         },
         "tickerURL": "https://www.bitstamp.net/api/v2/ticker/",
@@ -72,9 +72,9 @@ const exchanges = {
     "bitfinex": {
         "fullName": "BitFinex",
         "symbolURL": "https://api.bitfinex.com/v1/symbols/",
-        "decodeSymbols": function(obj) {
+        "decodeSymbols": function(obj, exchange) {
             obj.forEach(function(item) {
-                symbols[key].push(item);
+                symbols[exchange].push(item);
             });
         },
         "tickerURL": "https://api.bitfinex.com/v1/ticker/",
@@ -149,7 +149,7 @@ function update(msg){
             // body.forEach(function(item) {
             //     symbols[key].push(val.decodeSymbol(item));
             // });
-            val.decodeSymbols(body);
+            val.decodeSymbols(body, key);
             if (msg)
                 msg.reply(val.fullName + " markets updated: '" + symbols[key].join("', '") + "'.");
             console.log(val.fullName + " markets updated: '" + symbols[key].join("', '") + "'.");
