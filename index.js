@@ -60,7 +60,7 @@ client.on('ready', () => {
 });
 
 client.on('message', msg => {
-    console.log("Attempting to execute command '" + msg.content.toString() + "'.");
+    //console.log("Attempting to execute command '" + msg.content.toString() + "'.");
     if (msg.content === "!update")
     {
         Object.keys(exchanges).forEach(function(key) {
@@ -111,8 +111,8 @@ client.on('message', msg => {
         var isSupported = false;
         for (var key in symbols[targetExchange])
         {
-            console.log(key + ":" + targetPair);
-            if (key == targetPair)
+            //console.log(symbols[targetExchange][key] + ":" + targetPair);
+            if (symbols[targetExchange][key] == targetPair)
             {
                 isSupported = true;
                 break;
@@ -137,45 +137,6 @@ client.on('message', msg => {
             });
         });
     }
-    // var content = msg.content.split(" ");
-    // if (content[0] == "!price") {
-    //     var currPair = content[1];
-    //     if (typeof currPair !== "undefined" && currPair !== null)
-    //     {
-    //         var found = false;
-    //         for (var i = 0; i < pairs.length; i++)
-    //         {
-    //             if (currPair == pairs[i])
-    //             {
-    //                 found = true;
-    //                 break;
-    //             }
-    //         }
-
-    //         if (!found)
-    //         {
-    //             msg.reply("Market '" + currPair + "' not found. Please try one of the following: '" + pairs.join("','") + "'.");
-    //             return;
-    //         }
-
-    //         https.get(url + currPair, res => {
-    //         	res.setEncoding("utf8");
-    //         	let body = "";
-    //         	res.on("data", data => {
-    //         		body += data;
-    //         	});
-    //         	res.on("end", () => {
-    //         		body = JSON.parse(body);
-    //         		msg.reply("Latest Bitstamp price for '" + currPair + "': " + pairSymbol[i] + `${body.last}`);
-    //         	});
-    //         });
-    //     }
-    //     else
-    //     {
-    //         msg.reply("Use !price <market_name> with one of the following markets: '" + pairs.join("','") + "'. ");
-    //         return;
-    //     }
-    // }
 });
 
 client.login(process.env.TOKEN);
