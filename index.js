@@ -113,7 +113,7 @@ const exchanges = {
     },
     "binance": {
         "fullName": "Binance",
-        "symbolURL": "https://api.binance.com/api/v1/exchangeInfo/",
+        "symbolURL": "https://api.binance.com/api/v1/exchangeInfo",
         "decodeSymbols": function(obj, exchange) {
             obj.symbols.forEach(function(item) {
                 symbols[exchange].push(item.symbol);
