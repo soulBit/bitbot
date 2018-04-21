@@ -60,7 +60,6 @@ client.on('ready', () => {
 client.on('message', msg => {
     if (msg.content === "!update")
     {
-        var output = "";
         Object.keys(exchanges).forEach(function(key) {
             var val = exchanges[key];
             updateExchangeData(val.symbolURL).then(function(body){
@@ -68,10 +67,10 @@ client.on('message', msg => {
                 body.forEach(function(item) {
                     symbols[key].push(item[val.symbolPropName]);
                 });
-                output += val.fullName + " markets updated: '" + symbols[key].join("', '") + "'. \n";
+                msg.reply(val.fullName + " markets updated: '" + symbols[key].join("', '") + "'.");
             });
         });
-        msg.reply(output);
+        
         return;
     }
 
