@@ -1,7 +1,6 @@
 // Discord.js bot
 //TODO: implement more exchanges
 //TODO: add more currency pair symbols for bitfinex pairs
-//TODO: automatically determine currency pair symbol based on last 3 charcters of the currency pair id
 //TODO: automatically update exchange data every 24 hours
 
 //API docs
@@ -164,6 +163,10 @@ client.on('message', msg => {
     var content = msg.content.split(" ");
     if (content[0].indexOf("!") == 0)
         console.log(content.join(" "));
+    else
+        return;
+
+    var exchangeStr = "'" + Object.keys(exchanges).join("', '") + "'";
 
     if (content[0] === "!update")
     {
@@ -171,17 +174,23 @@ client.on('message', msg => {
         return;
     }
 
-    // if (msg.content === "!help")
-    // {
-    //     msg.reply("Use !price <exchange> <currency_pair> with one of the following exchanges: '" + pairs.join("','") + "'. ");
-    //     return;
-    // }
+    if (msg.content === "!help")
+    {
+        
+        var helpString = `
+            Supported commands:
+            !price <exchange> <currency_pair> - returns the current market price for <currency_pair> from <exchange>. Possible exchanges are: ${exchangeStr}.
+            !market <exchange> - returns the list of possible currency pairs that can be queried from <exchange>. Possible exchanges are: ${exchangeStr}.
+        `;
+        msg.reply(helpString);
+        return;
+    }
 
     if (content[0] == "!market")
     {
         if (content.length < 2)
         {
-            msg.reply("Use !market <exchange> with one of the following exchanges: '" + Object.keys(exchanges).join("', '") + "'. ");
+            msg.reply("Use !market <exchange> with one of the following exchanges: " + exchangeStr + ". ");
             return;
         }
         var targetExchange = content[1];
@@ -198,7 +207,7 @@ client.on('message', msg => {
     {
         if (content.length < 3)
         {
-            msg.reply("Use !price <exchange> <currency_pair> with one of the following exchanges: '" + Object.keys(exchanges).join("', '") + "'. ");
+            msg.reply("Use !price <exchange> <currency_pair> with one of the following exchanges: " + exchangeStr + ". ");
             return;
         }
 
