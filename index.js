@@ -111,7 +111,11 @@ client.on('message', msg => {
         var isSupported = false;
         for (var i = 0; i < symbols[targetExchange].length; i++)
         {
+            if (!symbols[targetExchange][i])
+                continue;
+            
             console.log(symbols[targetExchange][i] + ":" + targetPair);
+
             if (symbols[targetExchange][i] == targetPair)
             {
                 isSupported = true;
