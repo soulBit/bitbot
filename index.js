@@ -41,48 +41,58 @@ function updateExchangeData(exchange){
                 resolve(body);
             });
         });
-        // reject on request error
         req.on('error', function(err) {
-            // This is not a "Second reject", just a different sort of failure
             reject(err);
         });   
     });
 }
 
-// const pairs = ["btcusd", "btceur", "eurusd", "xrpusd", "xrpeur", "xrpbtc", "ltcusd", "ltceur", "ltcbtc", "ethusd", "etheur", "ethbtc", "bchusd", "bcheur", "bchbtc"];
-// const pairSymbol = ["$", "€", "$", "$", "€", "BTC", "$", "€", "BTC", "$", "€", "BTC", "$", "€", "BTC" ];
-
-
-//TODO: implement more exchanges
-//TODO: automatically determine currency pair symbol based on last 3 charcters of the currency pair id
-//TODO: automatically update exchange data on bot redeploy
-//TODO: automatically update exchange data every 24 hours
-
-//https://www.bitstamp.net/api/
-//https://docs.bitfinex.com/v2/docs/ws-general#section-supported-pairs
+function update(msg){
+    Object.keys(exchanges).forEach(function(key) {
+        var val = exchanges[key];
+        updateExchangeData(val.symbolURL).then(function(body){
+            symbols[key] = [];
+            body.forEach(function(item) {
+                if (val.symbolPropName.length > 0)
+                    symbols[key].push(item[val.symbolPropName]);
+                else
+                    symbols[key].push(item);
+            });
+            if (msg)
+                msg.reply(val.fullName + " markets updated: '" + symbols[key].join("', '") + "'.");
+            console.log(val.fullName + " markets updated: '" + symbols[key].join("', '") + "'.");
+        }, function(error){
+            console.log(error);
+        });
+    });
+}
 
 client.on('ready', () => {
-  console.log(`Logged in as ${client.user.tag}!`);
+    console.log(`Logged in as ${client.user.tag}!`);
+    update();
 });
 
 client.on('message', msg => {
     //console.log("Attempting to execute command '" + msg.content.toString() + "'.");
     if (msg.content === "!update")
     {
-        Object.keys(exchanges).forEach(function(key) {
-            var val = exchanges[key];
-            updateExchangeData(val.symbolURL).then(function(body){
-                symbols[key] = [];
-                body.forEach(function(item) {
-                    if (val.symbolPropName.length > 0)
-                        symbols[key].push(item[val.symbolPropName]);
-                    else
-                        symbols[key].push(item);
-                });
-                msg.reply(val.fullName + " markets updated: '" + symbols[key].join("', '") + "'.");
-                console.log(val.fullName + " markets updated: '" + symbols[key].join("', '") + "'.");
-            });
-        });
+        // Object.keys(exchanges).forEach(function(key) {
+        //     var val = exchanges[key];
+        //     updateExchangeData(val.symbolURL).then(function(body){
+        //         symbols[key] = [];
+        //         body.forEach(function(item) {
+        //             if (val.symbolPropName.length > 0)
+        //                 symbols[key].push(item[val.symbolPropName]);
+        //             else
+        //                 symbols[key].push(item);
+        //         });
+        //         msg.reply(val.fullName + " markets updated: '" + symbols[key].join("', '") + "'.");
+        //         console.log(val.fullName + " markets updated: '" + symbols[key].join("', '") + "'.");
+        //     }, function(error){
+        //         console.log(error);
+        //     });
+        // });
+        update(msg);
         
         return;
     }
