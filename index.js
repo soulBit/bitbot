@@ -60,6 +60,7 @@ client.on('ready', () => {
 });
 
 client.on('message', msg => {
+    console.log("Attempting to execute command '" + msg.content + "'.");
     if (msg.content === "!update")
     {
         Object.keys(exchanges).forEach(function(key) {
@@ -70,6 +71,7 @@ client.on('message', msg => {
                     symbols[key].push(item[val.symbolPropName]);
                 });
                 msg.reply(val.fullName + " markets updated: '" + symbols[key].join("', '") + "'.");
+                console.log(val.fullName + " markets updated: '" + symbols[key].join("', '") + "'.");
             });
         });
         
@@ -103,6 +105,22 @@ client.on('message', msg => {
         {
             //add code to check if valid exchange
             msg.reply("you messed up, no currency pair specified");
+            return;
+        }
+
+        var isSupported = false;
+        for (var key in symbols[targetExchange])
+        {
+            if (key == targetPair)
+            {
+                isSupported = true;
+                break;
+            }
+        }
+
+        if (!isSupported)
+        {
+            msg.reply("Currency pair '" + targetPair + "' not present for '" + targetExchange + "'. Please use one of the following: '" + symbols[targetExchange].join("', '") + ". ");
             return;
         }
 
